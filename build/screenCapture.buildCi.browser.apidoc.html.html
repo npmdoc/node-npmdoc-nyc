@@ -1,4 +1,4 @@
-<div class="apidocDiv">
+<html><head></head><body><div class="apidocDiv">
 <style>
 /*csslint
 */
@@ -47,17 +47,10 @@
 }
 </style>
 <h1>api documentation for
-    <a
-
-        href="https://github.com/istanbuljs/nyc#readme"
-
-    >nyc (v10.2.0)</a>
+    <a href="https://github.com/istanbuljs/nyc#readme">nyc (v10.2.0)</a>
 </h1>
 <h4>the Istanbul command line interface</h4>
-<div class="apidocSectionDiv"><a
-    href="#apidoc.tableOfContents"
-    id="apidoc.tableOfContents"
-><h1>table of contents</h1></a><ol>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.nyc">module nyc</a><ol>
 
@@ -135,20 +128,20 @@
   config = config || {}
   this.config = config
 
-  this.subprocessBin = config.subprocessBin || path.resolve(__dirname, &#x27;./bin/nyc.js&#x27;)
-  this._tempDirectory = config.tempDirectory || &#x27;./.nyc_output&#x27;
-  this._instrumenterLib = require(config.instrumenter || &#x27;./lib/instrumenters/istanbul&#x27;)
-  this._reportDir = config.reportDir || &#x27;coverage&#x27;
-  this._sourceMap = typeof config.sourceMap === &#x27;boolean&#x27; ? config.sourceMap : true
+  this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
+  this._tempDirectory = config.tempDirectory || './.nyc_output'
+  this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
+  this._reportDir = config.reportDir || 'coverage'
+  this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
   this._showProcessTree = config.showProcessTree || false
   this._eagerInstantiation = config.eager || false
   this.cwd = config.cwd || process.cwd()
 
-  this.reporter = arrify(config.reporter || &#x27;text&#x27;)
+  this.reporter = arrify(config.reporter || 'text')
 
-  this.cacheDirectory = config.cacheDir || findCacheDir({name: &#x27;nyc&#x27;, cwd: this.cwd})
+  this.cacheDirectory = config.cacheDir || findCacheDir({name: 'nyc', cwd: this.cwd})
 
-  this.enableCache = Boolean(this.cacheDirectory &#x26;&#x26; (config.enableCache === true || process.env.NYC_CACHE === &#x27;enable&#x27;))
+  this.enableCache = Boolean(this.cacheDirectory &amp;&amp; (config.enableCache === true || process.env.NYC_CACHE === 'enable'))
 
   this.exclude = testExclude({
     cwd: this.cwd,
@@ -159,7 +152,7 @@
   // require extensions can be provided as config in package.json.
   this.require = arrify(config.require)
 
-  this.extensions = arrify(config.extension).concat(&#x27;.js&#x27;).map(function (ext) {
+  this.extensions = arrify(config.extension).concat('.js').map(function (ext) {
     return ext.toLowerCase()
   }).filter(function (item, pos, arr) {
     // avoid duplicate extensions
@@ -178,7 +171,7 @@
   this.loadedMaps = null
   this.fakeRequire = null
 
-  this.processInfo = new ProcessInfo(config &#x26;&#x26; config._processInfo)
+  this.processInfo = new ProcessInfo(config &amp;&amp; config._processInfo)
   this.rootId = this.processInfo.root || this.generateUniqueID()
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
@@ -217,128 +210,128 @@
     <ul>
     <li>description and source-code<pre class="apidocCodePre">buildYargs = function (cwd) {
   return Yargs([])
-    .usage(&#x27;$0 [command] [options]\n\nrun your tests with the nyc bin to instrument them with coverage&#x27;)
-    .command(&#x27;report&#x27;, &#x27;run coverage report for .nyc_output&#x27;, function (yargs) {
+    .usage('$0 [command] [options]\n\nrun your tests with the nyc bin to instrument them with coverage')
+    .command('report', 'run coverage report for .nyc_output', function (yargs) {
       return yargs
-        .usage(&#x27;$0 report [options]&#x27;)
-        .option(&#x27;reporter&#x27;, {
-          alias: &#x27;r&#x27;,
-          describe: &#x27;coverage reporter(s) to use&#x27;,
-          default: &#x27;text&#x27;
+        .usage('$0 report [options]')
+        .option('reporter', {
+          alias: 'r',
+          describe: 'coverage reporter(s) to use',
+          default: 'text'
         })
-        .option(&#x27;report-dir&#x27;, {
-          describe: &#x27;directory to output coverage reports in&#x27;,
-          default: &#x27;coverage&#x27;
+        .option('report-dir', {
+          describe: 'directory to output coverage reports in',
+          default: 'coverage'
         })
-        .option(&#x27;temp-directory&#x27;, {
-          describe: &#x27;directory from which coverage JSON files are read&#x27;,
-          default: &#x27;./.nyc_output&#x27;
+        .option('temp-directory', {
+          describe: 'directory from which coverage JSON files are read',
+          default: './.nyc_output'
         })
-        .option(&#x27;show-process-tree&#x27;, {
-          describe: &#x27;display the tree of spawned processes&#x27;,
+        .option('show-process-tree', {
+          describe: 'display the tree of spawned processes',
           default: false,
-          type: &#x27;boolean&#x27;
+          type: 'boolean'
         })
-        .example(&#x27;$0 report --reporter=lcov&#x27;, &#x27;output an HTML lcov report to ./coverage&#x27;)
+        .example('$0 report --reporter=lcov', 'output an HTML lcov report to ./coverage')
     })
-    .command(&#x27;check-coverage&#x27;, &#x27;check whether coverage is within thresholds provided&#x27;, function (yargs) {
+    .command('check-coverage', 'check whether coverage is within thresholds provided', function (yargs) {
       return yargs
-        .usage(&#x27;$0 check-coverage [options]&#x27;)
-        .option(&#x27;branches&#x27;, {
+        .usage('$0 check-coverage [options]')
+        .option('branches', {
           default: 0,
-          description: &#x27;what % of branches must be covered?&#x27;
+          description: 'what % of branches must be covered?'
         })
-        .option(&#x27;functions&#x27;, {
+        .option('functions', {
           default: 0,
-          description: &#x27;what % of functions must be covered?&#x27;
+          description: 'what % of functions must be covered?'
         })
-        .option(&#x27;lines&#x27;, {
+        .option('lines', {
           default: 90,
-          description: &#x27;what % of lines must be covered?&#x27;
+          description: 'what % of lines must be covered?'
         })
-        .option(&#x27;statements&#x27;, {
+        .option('statements', {
           default: 0,
-          description: &#x27;what % of statements must be covered?&#x27;
+          description: 'what % of statements must be covered?'
         })
-        .example(&#x27;$0 check-coverage --lines 95&#x27;, &#x22;check whether the JSON in nyc&#x27;s output folder meets the thresholds provided&#x22;)
+        .example('$0 check-coverage --lines 95', "check whether the JSON in nyc's output folder meets the thresholds provided")
     })
-    .option(&#x27;reporter&#x27;, {
-      alias: &#x27;r&#x27;,
-      describe: &#x27;coverage reporter(s) to use&#x27;,
-      default: &#x27;text&#x27;,
+    .option('reporter', {
+      alias: 'r',
+      describe: 'coverage reporter(s) to use',
+      default: 'text',
       globa: false
     })
-    .option(&#x27;report-dir&#x27;, {
-      describe: &#x27;directory to output coverage reports in&#x27;,
-      default: &#x27;coverage&#x27;,
+    .option('report-dir', {
+      describe: 'directory to output coverage reports in',
+      default: 'coverage',
       global: false
     })
-    .option(&#x27;silent&#x27;, {
-      alias: &#x27;s&#x27;,
+    .option('silent', {
+      alias: 's',
       default: false,
-      type: &#x27;boolean&#x27;,
-      describe: &#x22;don&#x27;t output a report after tests finish running&#x22;,
+      type: 'boolean',
+      describe: "don't output a report after tests finish running",
       global: false
     })
-    .option(&#x27;all&#x27;, {
-      alias: &#x27;a&#x27;,
+    .option('all', {
+      alias: 'a',
       default: false,
-      type: &#x27;boolean&#x27;,
-      describe: &#x27;whether or not to instrument all files of the project (not just the ones touched by your test suite)&#x27;,
+      type: 'boolean',
+      describe: 'whether or not to instrument all files of the project (not just the ones touched by your test suite)',
       global: false
     })
-    .option(&#x27;exclude&#x27;, {
-      alias: &#x27;x&#x27;,
+    .option('exclude', {
+      alias: 'x',
       default: testExclude.defaultExclude,
-      describe: &#x27;a list of specific files and directories that should be excluded from coverage, glob patterns are supported, node_modules
- is always excluded&#x27;,
+      describe: 'a list of specific files and directories that should be excluded from coverage, glob patterns are supported, node_modules
+ is always excluded',
       global: false
     })
-    .option(&#x27;include&#x27;, {
-      alias: &#x27;n&#x27;,
+    .option('include', {
+      alias: 'n',
       default: [],
-      describe: &#x27;a list of specific files that should be covered, glob patterns are supported&#x27;,
+      describe: 'a list of specific files that should be covered, glob patterns are supported',
       global: false
     })
-    .option(&#x27;require&#x27;, {
-      alias: &#x27;i&#x27;,
+    .option('require', {
+      alias: 'i',
       default: [],
-      describe: &#x27;a list of additional modules that nyc should attempt to require in its subprocess, e.g., babel-register, babel-
-polyfill.&#x27;,
+      describe: 'a list of additional modules that nyc should attempt to require in its subprocess, e.g., babel-register, babel-
+polyfill.',
       global: false
     })
-    .option(&#x27;eager&#x27;, {
+    .option('eager', {
       default: false,
-      type: &#x27;boolean&#x27;,
-      describe: &#x27;instantiate the instrumenter at startup (see https://git.io/vMKZ9)&#x27;,
+      type: 'boolean',
+      describe: 'instantiate the instrumenter at startup (see https://git.io/vMKZ9)',
       global: false
     })
-    .option(&#x27;cache&#x27;, {
-      alias: &#x27;c&#x27;,
+    .option('cache', {
+      alias: 'c',
       default: true,
-      type: &#x27;boolean&#x27;,
-      describe: &#x27;cache instrumentation results for improved performance&#x27;,
+      type: 'boolean',
+      describe: 'cache instrumentation results for improved performance',
       global: false
     })
-    .option(&#x27;babel-cache&#x27;, {
+    .option('babel-cache', {
       default: false,
-      type: &#x27;boolean&#x27;,
-      describe: &#x27;cache babel transpilation results for improved performance&#x27;,
+      type: 'boolean',
+      describe: 'cache babel transpilation results for improved performance',
       global: false
     })
-    .option(&#x27;extension&#x27;, {
-      alias: &#x27;e&#x27;,
+    .option('extension', {
+      alias: 'e',
       default: [],
-      describe: &#x27;a list of extensions that nyc should handle in addition to .js&#x27;,
+      describe: 'a list of extensions that nyc should handle in addition to .js',
       global: false
     })
-    .option(&#x27;check-coverage&#x27;, {
-      type: &#x27;boolean&#x27;,
+    .option('check-coverage', {
+      type: 'boolean',
       default: false,
-      describe: &#x27;check whether coverage is within thresholds provided&#x27;,
+      describe: 'check whether coverage is within thresholds provided',
       global: false
     })
-    .option(&#x27;branches&#x27;, {
+    .option('branches', {
       default: 0, ...</pre></li>
     <li>example usage<pre class="apidocCodePre">...
   )
@@ -370,10 +363,10 @@ config = config.parse(argv || [])
     <ul>
     <li>description and source-code<pre class="apidocCodePre">decorateYargs = function (yargs) {
   return yargs
-    .help(&#x27;h&#x27;)
-    .alias(&#x27;h&#x27;, &#x27;help&#x27;)
+    .help('h')
+    .alias('h', 'help')
     .version()
-    .command(require(&#x27;../lib/commands/instrument&#x27;))
+    .command(require('../lib/commands/instrument'))
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
@@ -389,13 +382,13 @@ config = config.parse(argv || [])
     <ul>
     <li>description and source-code<pre class="apidocCodePre">loadConfig = function (argv, cwd) {
   cwd = cwd || process.env.NYC_CWD || process.cwd()
-  var pkgPath = findUp.sync(&#x27;package.json&#x27;, {cwd: cwd})
-  var rcPath = findUp.sync(&#x27;.nycrc&#x27;, {cwd: cwd})
+  var pkgPath = findUp.sync('package.json', {cwd: cwd})
+  var rcPath = findUp.sync('.nycrc', {cwd: cwd})
   var rcConfig = null
 
   if (rcPath) {
     rcConfig = JSON.parse(
-      fs.readFileSync(rcPath, &#x27;utf-8&#x27;)
+      fs.readFileSync(rcPath, 'utf-8')
     )
   }
 
@@ -433,3 +426,4 @@ config = config.parse(argv || [])
     ]
 </div>
 </div>
+</body></html>

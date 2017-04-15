@@ -63,9 +63,18 @@
 
         <li>
 
-            <a class="apidocElementLiA" href="#apidoc.element.nyc.process">
-            function <span class="apidocSignatureSpan">nyc.</span>process
-            <span class="apidocSignatureSpan">(defaults)</span>
+            <a class="apidocElementLiA" href="#apidoc.element.nyc.nyc">
+            function <span class="apidocSignatureSpan"></span>nyc
+            <span class="apidocSignatureSpan">(config)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.nyc.toString">
+            function <span class="apidocSignatureSpan">nyc.</span>toString
+            <span class="apidocSignatureSpan">()</span>
             </a>
 
         </li>
@@ -73,18 +82,6 @@
         <li>
 
             <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">nyc.</span>config_util</span>
-
-        </li>
-
-        <li>
-
-            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">nyc.</span>process.prototype</span>
-
-        </li>
-
-        <li>
-
-            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">nyc.</span>process_args</span>
 
         </li>
 
@@ -121,72 +118,6 @@
 
     </ol></li>
 
-    <li class="apidocModuleLi"><a href="#apidoc.module.nyc.process">module nyc.process</a><ol>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.nyc.process.process">
-            function <span class="apidocSignatureSpan">nyc.</span>process
-            <span class="apidocSignatureSpan">(defaults)</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.nyc.process.buildProcessTree">
-            function <span class="apidocSignatureSpan">nyc.process.</span>buildProcessTree
-            <span class="apidocSignatureSpan">(infos)</span>
-            </a>
-
-        </li>
-
-    </ol></li>
-
-    <li class="apidocModuleLi"><a href="#apidoc.module.nyc.process.prototype">module nyc.process.prototype</a><ol>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.nyc.process.prototype.getCoverageMap">
-            function <span class="apidocSignatureSpan">nyc.process.prototype.</span>getCoverageMap
-            <span class="apidocSignatureSpan">(merger)</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.nyc.process.prototype.render">
-            function <span class="apidocSignatureSpan">nyc.process.prototype.</span>render
-            <span class="apidocSignatureSpan">(nyc)</span>
-            </a>
-
-        </li>
-
-    </ol></li>
-
-    <li class="apidocModuleLi"><a href="#apidoc.module.nyc.process_args">module nyc.process_args</a><ol>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.nyc.process_args.hideInstrumenteeArgs">
-            function <span class="apidocSignatureSpan">nyc.process_args.</span>hideInstrumenteeArgs
-            <span class="apidocSignatureSpan">()</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.nyc.process_args.hideInstrumenterArgs">
-            function <span class="apidocSignatureSpan">nyc.process_args.</span>hideInstrumenterArgs
-            <span class="apidocSignatureSpan">(yargv)</span>
-            </a>
-
-        </li>
-
-    </ol></li>
-
 </ol></div>
 
 <div class="apidocSectionDiv">
@@ -194,37 +125,79 @@
 
 
     <h2>
-        <a href="#apidoc.element.nyc.process" id="apidoc.element.nyc.process">
-        function <span class="apidocSignatureSpan">nyc.</span>process
-        <span class="apidocSignatureSpan">(defaults)</span>
+        <a href="#apidoc.element.nyc.nyc" id="apidoc.element.nyc.nyc">
+        function <span class="apidocSignatureSpan"></span>nyc
+        <span class="apidocSignatureSpan">(config)</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">function ProcessInfo(defaults) {
-  defaults = defaults || {}
+    <li>description and source-code<pre class="apidocCodePre">function NYC(config) {
+  config = config || {}
+  this.config = config
 
-  this.pid = String(process.pid)
-  this.argv = process.argv
-  this.execArgv = process.execArgv
-  this.cwd = process.cwd()
-  this.time = Date.now()
-  this.ppid = null
-  this.root = null
-  this.coverageFilename = null
-  this.nodes = [] // list of children, filled by buildProcessTree()
+  this.subprocessBin = config.subprocessBin || path.resolve(__dirname, &#x27;./bin/nyc.js&#x27;)
+  this._tempDirectory = config.tempDirectory || &#x27;./.nyc_output&#x27;
+  this._instrumenterLib = require(config.instrumenter || &#x27;./lib/instrumenters/istanbul&#x27;)
+  this._reportDir = config.reportDir || &#x27;coverage&#x27;
+  this._sourceMap = typeof config.sourceMap === &#x27;boolean&#x27; ? config.sourceMap : true
+  this._showProcessTree = config.showProcessTree || false
+  this._eagerInstantiation = config.eager || false
+  this.cwd = config.cwd || process.cwd()
 
-  this._coverageMap = null
+  this.reporter = arrify(config.reporter || &#x27;text&#x27;)
 
-  for (var key in defaults) {
-    this[key] = defaults[key]
-  }
+  this.cacheDirectory = config.cacheDir || findCacheDir({name: &#x27;nyc&#x27;, cwd: this.cwd})
+
+  this.enableCache = Boolean(this.cacheDirectory &#x26;&#x26; (config.enableCache === true || process.env.NYC_CACHE === &#x27;enable&#x27;))
+
+  this.exclude = testExclude({
+    cwd: this.cwd,
+    include: config.include,
+    exclude: config.exclude
+  })
+
+  // require extensions can be provided as config in package.json.
+  this.require = arrify(config.require)
+
+  this.extensions = arrify(config.extension).concat(&#x27;.js&#x27;).map(function (ext) {
+    return ext.toLowerCase()
+  }).filter(function (item, pos, arr) {
+    // avoid duplicate extensions
+    return arr.indexOf(item) === pos
+  })
+
+  this.transforms = this.extensions.reduce(function (transforms, ext) {
+    transforms[ext] = this._createTransform(ext)
+    return transforms
+  }.bind(this), {})
+
+  this.sourceMapCache = libSourceMaps.createSourceMapStore()
+
+  this.hookRunInContext = config.hookRunInContext
+  this.hashCache = {}
+  this.loadedMaps = null
+  this.fakeRequire = null
+
+  this.processInfo = new ProcessInfo(config &#x26;&#x26; config._processInfo)
+  this.rootId = this.processInfo.root || this.generateUniqueID()
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
 
 
 
-
+    <h2>
+        <a href="#apidoc.element.nyc.toString" id="apidoc.element.nyc.toString">
+        function <span class="apidocSignatureSpan">nyc.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toString = function () {
+    return toString;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
 
 
 
@@ -447,239 +420,6 @@ config = config.parse(argv || [])
   config.cwd = cwd
 
   return config
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-</div>
-
-<div class="apidocSectionDiv">
-<h1><a href="#apidoc.module.nyc.process" id="apidoc.module.nyc.process">module nyc.process</a></h1>
-
-
-    <h2>
-        <a href="#apidoc.element.nyc.process.process" id="apidoc.element.nyc.process.process">
-        function <span class="apidocSignatureSpan">nyc.</span>process
-        <span class="apidocSignatureSpan">(defaults)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function ProcessInfo(defaults) {
-  defaults = defaults || {}
-
-  this.pid = String(process.pid)
-  this.argv = process.argv
-  this.execArgv = process.execArgv
-  this.cwd = process.cwd()
-  this.time = Date.now()
-  this.ppid = null
-  this.root = null
-  this.coverageFilename = null
-  this.nodes = [] // list of children, filled by buildProcessTree()
-
-  this._coverageMap = null
-
-  for (var key in defaults) {
-    this[key] = defaults[key]
-  }
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.nyc.process.buildProcessTree" id="apidoc.element.nyc.process.buildProcessTree">
-        function <span class="apidocSignatureSpan">nyc.process.</span>buildProcessTree
-        <span class="apidocSignatureSpan">(infos)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">buildProcessTree = function (infos) {
-  var treeRoot = new ProcessInfo({ _label: &#x27;nyc&#x27; })
-  var nodes = { }
-
-  infos = infos.sort(function (a, b) {
-    return a.time - b.time
-  })
-
-  infos.forEach(function (p) {
-    nodes[p.root + &#x27;:&#x27; + p.pid] = p
-  })
-
-  infos.forEach(function (p) {
-    if (!p.ppid) {
-      return
-    }
-
-    var parent = nodes[p.root + &#x27;:&#x27; + p.ppid]
-    if (!parent) {
-      parent = treeRoot
-    }
-
-    parent.nodes.push(p)
-  })
-
-  return treeRoot
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">...
-
-if (this._showProcessTree) {
-  this.showProcessTree()
-}
-}
-
-NYC.prototype.showProcessTree = function () {
-var processTree = ProcessInfo.<span class="apidocCodeKeywordSpan">buildProcessTree</span>(this._loadProcessInfos())
-
-console.log(processTree.render(this))
-}
-
-NYC.prototype.checkCoverage = function (thresholds) {
-var map = this._getCoverageMapFromAllCoverageFiles()
-var summary = map.getCoverageSummary()
-...</pre></li>
-    </ul>
-
-
-</div>
-
-<div class="apidocSectionDiv">
-<h1><a href="#apidoc.module.nyc.process.prototype" id="apidoc.module.nyc.process.prototype">module nyc.process.prototype</a></h1>
-
-
-    <h2>
-        <a href="#apidoc.element.nyc.process.prototype.getCoverageMap" id="apidoc.element.nyc.process.prototype.getCoverageMap">
-        function <span class="apidocSignatureSpan">nyc.process.prototype.</span>getCoverageMap
-        <span class="apidocSignatureSpan">(merger)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">getCoverageMap = function (merger) {
-  if (this._coverageMap) {
-    return this._coverageMap
-  }
-
-  var childMaps = this.nodes.map(function (child) {
-    return child.getCoverageMap(merger)
-  })
-
-  this._coverageMap = merger([this.coverageFilename], childMaps)
-
-  return this._coverageMap
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">...
-
-ProcessInfo.prototype.getCoverageMap = function (merger) {
-  if (this._coverageMap) {
-    return this._coverageMap
-  }
-
-  var childMaps = this.nodes.map(function (child) {
-    return child.<span class="apidocCodeKeywordSpan">getCoverageMap</span>(merger)
-  })
-
-  this._coverageMap = merger([this.coverageFilename], childMaps)
-
-  return this._coverageMap
-}
-...</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.nyc.process.prototype.render" id="apidoc.element.nyc.process.prototype.render">
-        function <span class="apidocSignatureSpan">nyc.process.prototype.</span>render
-        <span class="apidocSignatureSpan">(nyc)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">render = function (nyc) {
-  this.getCoverageMap(function (filenames, maps) {
-    var map = libCoverage.createCoverageMap({})
-
-    nyc.loadReports(filenames).forEach(function (report) {
-      map.merge(report)
-    })
-
-    maps.forEach(function (otherMap) {
-      map.merge(otherMap)
-    })
-
-    return map
-  })
-
-  return archy(this)
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">...
-  this.showProcessTree()
-}
-}
-
-NYC.prototype.showProcessTree = function () {
-var processTree = ProcessInfo.buildProcessTree(this._loadProcessInfos())
-
-console.log(processTree.<span class="apidocCodeKeywordSpan">render</span>(this))
-}
-
-NYC.prototype.checkCoverage = function (thresholds) {
-var map = this._getCoverageMapFromAllCoverageFiles()
-var summary = map.getCoverageSummary()
-
-// ERROR: Coverage for lines (90.12%) does not meet global threshold (120%)
-...</pre></li>
-    </ul>
-
-
-</div>
-
-<div class="apidocSectionDiv">
-<h1><a href="#apidoc.module.nyc.process_args" id="apidoc.module.nyc.process_args">module nyc.process_args</a></h1>
-
-
-    <h2>
-        <a href="#apidoc.element.nyc.process_args.hideInstrumenteeArgs" id="apidoc.element.nyc.process_args.hideInstrumenteeArgs">
-        function <span class="apidocSignatureSpan">nyc.process_args.</span>hideInstrumenteeArgs
-        <span class="apidocSignatureSpan">()</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">hideInstrumenteeArgs = function () {
-  var argv = process.argv.slice(2)
-  var yargv = parser(argv)
-  if (!yargv._.length) return argv
-  for (var i = 0, command; (command = yargv._[i]) !== undefined; i++) {
-    if (~commands.indexOf(command)) return argv
-  }
-
-  // drop all the arguments after the bin being
-  // instrumented by nyc.
-  argv = argv.slice(0, argv.indexOf(yargv._[0]))
-  argv.push(yargv._[0])
-
-  return argv
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.nyc.process_args.hideInstrumenterArgs" id="apidoc.element.nyc.process_args.hideInstrumenterArgs">
-        function <span class="apidocSignatureSpan">nyc.process_args.</span>hideInstrumenterArgs
-        <span class="apidocSignatureSpan">(yargv)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">hideInstrumenterArgs = function (yargv) {
-  var argv = process.argv.slice(1)
-  argv = argv.slice(argv.indexOf(yargv._[0]))
-  if (argv[0][0] === &#x27;-&#x27;) {
-    argv.unshift(process.execPath)
-  }
-  return argv
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
