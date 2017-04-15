@@ -1,11 +1,13 @@
 # api documentation for  [nyc (v10.2.0)](https://github.com/istanbuljs/nyc#readme)  [![npm package](https://img.shields.io/npm/v/npmdoc-nyc.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-nyc) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-nyc.svg)](https://travis-ci.org/npmdoc/node-npmdoc-nyc)
 #### the Istanbul command line interface
 
-[![NPM](https://nodei.co/npm/nyc.png?downloads=true)](https://www.npmjs.com/package/nyc)
+[![NPM](https://nodei.co/npm/nyc.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/nyc)
 
-[![apidoc](https://npmdoc.github.io/node-npmdoc-nyc/build/screen-capture.buildNpmdoc.browser._2Fhome_2Ftravis_2Fbuild_2Fnpmdoc_2Fnode-npmdoc-nyc_2Ftmp_2Fbuild_2Fapidoc.html.png)](https://npmdoc.github.io/node-npmdoc-nyc/build..beta..travis-ci.org/apidoc.html)
+[![apidoc](https://npmdoc.github.io/node-npmdoc-nyc/build/screenCapture.buildCi.browser.apidoc.html.png)](https://npmdoc.github.io/node-npmdoc-nyc/build/apidoc.html)
 
-![package-listing](https://npmdoc.github.io/node-npmdoc-nyc/build/screen-capture.npmPackageListing.svg)
+![npmPackageListing](https://npmdoc.github.io/node-npmdoc-nyc/build/screenCapture.npmPackageListing.svg)
+
+![npmPackageDependencyTree](https://npmdoc.github.io/node-npmdoc-nyc/build/screenCapture.npmPackageDependencyTree.svg)
 
 
 
@@ -15,8 +17,7 @@
 
 {
     "author": {
-        "name": "Ben Coe",
-        "email": "ben@npmjs.com"
+        "name": "Ben Coe"
     },
     "bin": {
         "nyc": "./bin/nyc.js"
@@ -148,12 +149,10 @@
     "main": "index.js",
     "maintainers": [
         {
-            "name": "bcoe",
-            "email": "ben@npmjs.com"
+            "name": "bcoe"
         },
         {
-            "name": "isaacs",
-            "email": "isaacs@npmjs.com"
+            "name": "isaacs"
         }
     ],
     "name": "nyc",
@@ -170,7 +169,6 @@
         ]
     },
     "optionalDependencies": {},
-    "readme": "ERROR: No README data found!",
     "repository": {
         "type": "git",
         "url": "git+ssh://git@github.com/istanbuljs/nyc.git"
@@ -203,53 +201,83 @@
 # <a name="apidoc.tableOfContents"></a>[table of contents](#apidoc.tableOfContents)
 
 #### [module nyc](#apidoc.module.nyc)
-1.  [function <span class="apidocSignatureSpan">nyc.</span>process (defaults)](#apidoc.element.nyc.process)
+1.  [function <span class="apidocSignatureSpan"></span>nyc (config)](#apidoc.element.nyc.nyc)
+1.  [function <span class="apidocSignatureSpan">nyc.</span>toString ()](#apidoc.element.nyc.toString)
 1.  object <span class="apidocSignatureSpan">nyc.</span>config_util
-1.  object <span class="apidocSignatureSpan">nyc.</span>process.prototype
-1.  object <span class="apidocSignatureSpan">nyc.</span>process_args
 
 #### [module nyc.config_util](#apidoc.module.nyc.config_util)
 1.  [function <span class="apidocSignatureSpan">nyc.config_util.</span>buildYargs (cwd)](#apidoc.element.nyc.config_util.buildYargs)
 1.  [function <span class="apidocSignatureSpan">nyc.config_util.</span>decorateYargs (yargs)](#apidoc.element.nyc.config_util.decorateYargs)
 1.  [function <span class="apidocSignatureSpan">nyc.config_util.</span>loadConfig (argv, cwd)](#apidoc.element.nyc.config_util.loadConfig)
 
-#### [module nyc.process](#apidoc.module.nyc.process)
-1.  [function <span class="apidocSignatureSpan">nyc.</span>process (defaults)](#apidoc.element.nyc.process.process)
-1.  [function <span class="apidocSignatureSpan">nyc.process.</span>buildProcessTree (infos)](#apidoc.element.nyc.process.buildProcessTree)
-
-#### [module nyc.process.prototype](#apidoc.module.nyc.process.prototype)
-1.  [function <span class="apidocSignatureSpan">nyc.process.prototype.</span>getCoverageMap (merger)](#apidoc.element.nyc.process.prototype.getCoverageMap)
-1.  [function <span class="apidocSignatureSpan">nyc.process.prototype.</span>render (nyc)](#apidoc.element.nyc.process.prototype.render)
-
-#### [module nyc.process_args](#apidoc.module.nyc.process_args)
-1.  [function <span class="apidocSignatureSpan">nyc.process_args.</span>hideInstrumenteeArgs ()](#apidoc.element.nyc.process_args.hideInstrumenteeArgs)
-1.  [function <span class="apidocSignatureSpan">nyc.process_args.</span>hideInstrumenterArgs (yargv)](#apidoc.element.nyc.process_args.hideInstrumenterArgs)
-
 
 
 # <a name="apidoc.module.nyc"></a>[module nyc](#apidoc.module.nyc)
 
-#### <a name="apidoc.element.nyc.process"></a>[function <span class="apidocSignatureSpan">nyc.</span>process (defaults)](#apidoc.element.nyc.process)
+#### <a name="apidoc.element.nyc.nyc"></a>[function <span class="apidocSignatureSpan"></span>nyc (config)](#apidoc.element.nyc.nyc)
 - description and source-code
 ```javascript
-function ProcessInfo(defaults) {
-  defaults = defaults || {}
+function NYC(config) {
+  config = config || {}
+  this.config = config
 
-  this.pid = String(process.pid)
-  this.argv = process.argv
-  this.execArgv = process.execArgv
-  this.cwd = process.cwd()
-  this.time = Date.now()
-  this.ppid = null
-  this.root = null
-  this.coverageFilename = null
-  this.nodes = [] // list of children, filled by buildProcessTree()
+  this.subprocessBin = config.subprocessBin || path.resolve(__dirname, './bin/nyc.js')
+  this._tempDirectory = config.tempDirectory || './.nyc_output'
+  this._instrumenterLib = require(config.instrumenter || './lib/instrumenters/istanbul')
+  this._reportDir = config.reportDir || 'coverage'
+  this._sourceMap = typeof config.sourceMap === 'boolean' ? config.sourceMap : true
+  this._showProcessTree = config.showProcessTree || false
+  this._eagerInstantiation = config.eager || false
+  this.cwd = config.cwd || process.cwd()
 
-  this._coverageMap = null
+  this.reporter = arrify(config.reporter || 'text')
 
-  for (var key in defaults) {
-    this[key] = defaults[key]
-  }
+  this.cacheDirectory = config.cacheDir || findCacheDir({name: 'nyc', cwd: this.cwd})
+
+  this.enableCache = Boolean(this.cacheDirectory && (config.enableCache === true || process.env.NYC_CACHE === 'enable'))
+
+  this.exclude = testExclude({
+    cwd: this.cwd,
+    include: config.include,
+    exclude: config.exclude
+  })
+
+  // require extensions can be provided as config in package.json.
+  this.require = arrify(config.require)
+
+  this.extensions = arrify(config.extension).concat('.js').map(function (ext) {
+    return ext.toLowerCase()
+  }).filter(function (item, pos, arr) {
+    // avoid duplicate extensions
+    return arr.indexOf(item) === pos
+  })
+
+  this.transforms = this.extensions.reduce(function (transforms, ext) {
+    transforms[ext] = this._createTransform(ext)
+    return transforms
+  }.bind(this), {})
+
+  this.sourceMapCache = libSourceMaps.createSourceMapStore()
+
+  this.hookRunInContext = config.hookRunInContext
+  this.hashCache = {}
+  this.loadedMaps = null
+  this.fakeRequire = null
+
+  this.processInfo = new ProcessInfo(config && config._processInfo)
+  this.rootId = this.processInfo.root || this.generateUniqueID()
+}
+```
+- example usage
+```shell
+n/a
+```
+
+#### <a name="apidoc.element.nyc.toString"></a>[function <span class="apidocSignatureSpan">nyc.</span>toString ()](#apidoc.element.nyc.toString)
+- description and source-code
+```javascript
+toString = function () {
+    return toString;
 }
 ```
 - example usage
@@ -463,218 +491,6 @@ loadConfig = function (argv, cwd) {
   config.cwd = cwd
 
   return config
-}
-```
-- example usage
-```shell
-n/a
-```
-
-
-
-# <a name="apidoc.module.nyc.process"></a>[module nyc.process](#apidoc.module.nyc.process)
-
-#### <a name="apidoc.element.nyc.process.process"></a>[function <span class="apidocSignatureSpan">nyc.</span>process (defaults)](#apidoc.element.nyc.process.process)
-- description and source-code
-```javascript
-function ProcessInfo(defaults) {
-  defaults = defaults || {}
-
-  this.pid = String(process.pid)
-  this.argv = process.argv
-  this.execArgv = process.execArgv
-  this.cwd = process.cwd()
-  this.time = Date.now()
-  this.ppid = null
-  this.root = null
-  this.coverageFilename = null
-  this.nodes = [] // list of children, filled by buildProcessTree()
-
-  this._coverageMap = null
-
-  for (var key in defaults) {
-    this[key] = defaults[key]
-  }
-}
-```
-- example usage
-```shell
-n/a
-```
-
-#### <a name="apidoc.element.nyc.process.buildProcessTree"></a>[function <span class="apidocSignatureSpan">nyc.process.</span>buildProcessTree (infos)](#apidoc.element.nyc.process.buildProcessTree)
-- description and source-code
-```javascript
-buildProcessTree = function (infos) {
-  var treeRoot = new ProcessInfo({ _label: 'nyc' })
-  var nodes = { }
-
-  infos = infos.sort(function (a, b) {
-    return a.time - b.time
-  })
-
-  infos.forEach(function (p) {
-    nodes[p.root + ':' + p.pid] = p
-  })
-
-  infos.forEach(function (p) {
-    if (!p.ppid) {
-      return
-    }
-
-    var parent = nodes[p.root + ':' + p.ppid]
-    if (!parent) {
-      parent = treeRoot
-    }
-
-    parent.nodes.push(p)
-  })
-
-  return treeRoot
-}
-```
-- example usage
-```shell
-...
-
-if (this._showProcessTree) {
-  this.showProcessTree()
-}
-}
-
-NYC.prototype.showProcessTree = function () {
-var processTree = ProcessInfo.buildProcessTree(this._loadProcessInfos())
-
-console.log(processTree.render(this))
-}
-
-NYC.prototype.checkCoverage = function (thresholds) {
-var map = this._getCoverageMapFromAllCoverageFiles()
-var summary = map.getCoverageSummary()
-...
-```
-
-
-
-# <a name="apidoc.module.nyc.process.prototype"></a>[module nyc.process.prototype](#apidoc.module.nyc.process.prototype)
-
-#### <a name="apidoc.element.nyc.process.prototype.getCoverageMap"></a>[function <span class="apidocSignatureSpan">nyc.process.prototype.</span>getCoverageMap (merger)](#apidoc.element.nyc.process.prototype.getCoverageMap)
-- description and source-code
-```javascript
-getCoverageMap = function (merger) {
-  if (this._coverageMap) {
-    return this._coverageMap
-  }
-
-  var childMaps = this.nodes.map(function (child) {
-    return child.getCoverageMap(merger)
-  })
-
-  this._coverageMap = merger([this.coverageFilename], childMaps)
-
-  return this._coverageMap
-}
-```
-- example usage
-```shell
-...
-
-ProcessInfo.prototype.getCoverageMap = function (merger) {
-  if (this._coverageMap) {
-    return this._coverageMap
-  }
-
-  var childMaps = this.nodes.map(function (child) {
-    return child.getCoverageMap(merger)
-  })
-
-  this._coverageMap = merger([this.coverageFilename], childMaps)
-
-  return this._coverageMap
-}
-...
-```
-
-#### <a name="apidoc.element.nyc.process.prototype.render"></a>[function <span class="apidocSignatureSpan">nyc.process.prototype.</span>render (nyc)](#apidoc.element.nyc.process.prototype.render)
-- description and source-code
-```javascript
-render = function (nyc) {
-  this.getCoverageMap(function (filenames, maps) {
-    var map = libCoverage.createCoverageMap({})
-
-    nyc.loadReports(filenames).forEach(function (report) {
-      map.merge(report)
-    })
-
-    maps.forEach(function (otherMap) {
-      map.merge(otherMap)
-    })
-
-    return map
-  })
-
-  return archy(this)
-}
-```
-- example usage
-```shell
-...
-  this.showProcessTree()
-}
-}
-
-NYC.prototype.showProcessTree = function () {
-var processTree = ProcessInfo.buildProcessTree(this._loadProcessInfos())
-
-console.log(processTree.render(this))
-}
-
-NYC.prototype.checkCoverage = function (thresholds) {
-var map = this._getCoverageMapFromAllCoverageFiles()
-var summary = map.getCoverageSummary()
-
-// ERROR: Coverage for lines (90.12%) does not meet global threshold (120%)
-...
-```
-
-
-
-# <a name="apidoc.module.nyc.process_args"></a>[module nyc.process_args](#apidoc.module.nyc.process_args)
-
-#### <a name="apidoc.element.nyc.process_args.hideInstrumenteeArgs"></a>[function <span class="apidocSignatureSpan">nyc.process_args.</span>hideInstrumenteeArgs ()](#apidoc.element.nyc.process_args.hideInstrumenteeArgs)
-- description and source-code
-```javascript
-hideInstrumenteeArgs = function () {
-  var argv = process.argv.slice(2)
-  var yargv = parser(argv)
-  if (!yargv._.length) return argv
-  for (var i = 0, command; (command = yargv._[i]) !== undefined; i++) {
-    if (~commands.indexOf(command)) return argv
-  }
-
-  // drop all the arguments after the bin being
-  // instrumented by nyc.
-  argv = argv.slice(0, argv.indexOf(yargv._[0]))
-  argv.push(yargv._[0])
-
-  return argv
-}
-```
-- example usage
-```shell
-n/a
-```
-
-#### <a name="apidoc.element.nyc.process_args.hideInstrumenterArgs"></a>[function <span class="apidocSignatureSpan">nyc.process_args.</span>hideInstrumenterArgs (yargv)](#apidoc.element.nyc.process_args.hideInstrumenterArgs)
-- description and source-code
-```javascript
-hideInstrumenterArgs = function (yargv) {
-  var argv = process.argv.slice(1)
-  argv = argv.slice(argv.indexOf(yargv._[0]))
-  if (argv[0][0] === '-') {
-    argv.unshift(process.execPath)
-  }
-  return argv
 }
 ```
 - example usage
